@@ -11,7 +11,7 @@ import Graph from "./graph";
 function getFileNames(): Array<string> {
   let fileNameList: Array<string> = new Array();
 
-  fs.readdirSync("tsp_dataset").forEach((fileName) => {
+  fs.readdirSync("tsp_dataset_test").forEach((fileName) => {
     fileNameList.push(fileName);
   });
   return fileNameList;
@@ -25,11 +25,11 @@ function createGraphsFromFile() {
     let graph = new Graph();
 
     let graphDescription = fs.readFileSync(
-      "tsp_dataset/" + graphFileName,
+      "tsp_dataset_test/" + graphFileName,
       "utf8"
     );
     
-    //TODO Creazione grafo da file
+    graph.createFromFile(graphDescription);
     
     graphList.push(graph);
   });
