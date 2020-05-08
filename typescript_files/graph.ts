@@ -13,6 +13,7 @@
  *                                                                                      */
 //========================================================================================
 import GraphNode from "./graphNode";
+import Edge from "./edge";
 
 export default class Graph{
     name: string;
@@ -24,12 +25,14 @@ export default class Graph{
     
     adjacencyMatrix: number[][]; //Matrice di adiacenza che descrive le distanze tra nodi
     nodeList: Array<GraphNode>; //Lista di nodi del grafo
+    edgeList: Array<Edge>; //Lista di lati del grafo usata in Kruskal
 
     constructor(){
         this.name = this.description = this.type = this.edgeWeightType = this.displayDataType = "";
         this.numberOfNode = 0;
         this.adjacencyMatrix = [];
         this.nodeList = new Array();
+        this.edgeList = new Array();
     }
     
     getName(): string{
@@ -82,7 +85,11 @@ export default class Graph{
         return this.nodeList;
     }
 
-    addNewNode(id: string, x_coord: string, y_coord: string){
+    getEdgeList(): Array<Edge>{
+        return this.edgeList;
+    }
+
+    addNewNode(id: number, x_coord: number, y_coord: number){
         this.nodeList.push(new GraphNode(id, x_coord, y_coord));
     }
 
@@ -100,7 +107,7 @@ export default class Graph{
 
                 this.nodeList.forEach(secondNode =>{
                     let distance = this.computeDistanceEUC(firstNode, secondNode);
-                    this.adjacencyMatrix[firstNode.getNodeId()][secondNode.getNodeId()] = distance;
+                    this.adjacencyMatrix[firstNode.getNodeId()][secondNode.getNodeId()] = Math.round(distance);
                 })
             });
         }
@@ -111,7 +118,9 @@ export default class Graph{
 
     createFromFile(graphDescriptionFile: string){
         graphDescriptionFile = graphDescriptionFile.split("EOF")[0];
+        //Prima parte in cui ho la descrizione del grafo
         let graphDescription = graphDescriptionFile.split("NODE_COORD_SECTION")[0].split("\n").filter(Boolean);
+        //Seconda parte in cui ho i nodi
         let coordinatesDescription = graphDescriptionFile.split("NODE_COORD_SECTION")[1].split("\n").filter(Boolean);
 
         this.name = graphDescription[0].split(": ")[1];
@@ -122,13 +131,33 @@ export default class Graph{
         this.displayDataType = graphDescription[5].split(": ")[1];
 
         coordinatesDescription.forEach(coordinate => {
-            let id = coordinate.split(" ")[0];
-            let x_coord = coordinate.split(" ")[1];
-            let y_coord = coordinate.split(" ")[2];
+            let id = parseInt(coordinate.split(" ")[0]);
+            let x_coord = parseInt(coordinate.split(" ")[1]);
+            let y_coord = parseInt(coordinate.split(" ")[2]);
 
             this.addNewNode(id, x_coord, y_coord);
         });
-        this.createAdjacencyMatrix()
+        this.createAdjacencyMatrix();
+        this.createEdgeList();
+    }
+
+    createEdgeList(){
+        //creo la lista di lati prendendo i valori dal triangolo superiore della 
+        //matrice di adiacenza in modo da evitare lati duplicati
+
+        for(let node = 1; node <= this.numberOfNode; node++)
+            for(let index = 1; index <= this.numberOfNode; index++)
+                if(index >= node){
+                    let edge = new Edge();
+                    edge.createNewEdge(node, index, this.adjacencyMatrix[node][index]);
+                    this.edgeList.push(edge);
+                }
+    }
+    
+    getSortedWeights(): Array<Edge> {
+        return this.edgeList.sort(//Ordino l'array di lati usando i pesi
+          (a: Edge, b: Edge) => a.getWeight() - b.getWeight()
+        );
     }
 
 }
