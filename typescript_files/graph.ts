@@ -100,6 +100,24 @@ export default class Graph{
         return Math.sqrt(firstValue + secondValue);
     }
 
+    computeDistanceGEO(firstNode: GraphNode, secondNode: GraphNode): number{
+       let PI = 3.141592;
+       let idealRadius = 6378.388;
+
+       let firstLatitude = PI * (Math.trunc(firstNode.getXCoord()) + 5.0 * firstNode.getXCoord() - Math.trunc(firstNode.getXCoord()) / 3.0) / 180.0;
+       let secondLatitude = PI * (Math.trunc(secondNode.getXCoord()) + 5.0 * secondNode.getXCoord() - Math.trunc(secondNode.getXCoord()) / 3.0) / 180.0;
+       let firstLongitude = PI * (Math.trunc(firstNode.getYCoord()) + 5.0 * firstNode.getYCoord() - Math.trunc(firstNode.getYCoord()) / 3.0) / 180.0;
+       let secondLongitude = PI * (Math.trunc(secondNode.getYCoord()) + 5.0 * secondNode.getYCoord() - Math.trunc(secondNode.getYCoord()) / 3.0) / 180.0;
+
+       let longitude = Math.cos(firstLongitude - secondLongitude);
+       let latitude = Math.cos(firstLatitude - secondLatitude);
+       let latitude2 = Math.cos(firstLatitude + secondLatitude);
+
+       return Math.trunc(idealRadius * Math.acos(0.5 * ((1 + longitude) * latitude - (1 - longitude)*latitude2)) + 1);
+
+
+    }
+
     createAdjacencyMatrix(){
         if(this.edgeWeightType == "EUC_2D"){
             this.nodeList.forEach(firstNode => {
@@ -112,7 +130,14 @@ export default class Graph{
             });
         }
         else{
-            //TODO
+            this.nodeList.forEach(firstNode => {
+                this.adjacencyMatrix[firstNode.getNodeId()] = [];
+
+                this.nodeList.forEach(secondNode =>{
+                    let distance = this.computeDistanceGEO(firstNode, secondNode);
+                    this.adjacencyMatrix[firstNode.getNodeId()][secondNode.getNodeId()] = distance;
+                })
+            });
         }
     }
 
@@ -161,14 +186,3 @@ export default class Graph{
     }
 
 }
-/**
- * TODO:
- * Distanza euclidea tra due punti EUC_2D: 
- * P(px,py) e Q(qx, qy) due punti allora la distanza è
- * RadiceQuadra([px - qx]^2 + [py - qy]^2)
- * 
- * Riferimenti: https://it.wikipedia.org/wiki/Distanza_euclidea
- * TODO:
- * Distanza euclidea tra due punti GEO:
- * http://comopt.ifi.uni-heidelberg.de/software/TSPLIB95/TSPFAQ.html
- */
