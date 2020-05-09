@@ -185,4 +185,8 @@ export default class Graph{
         );
     }
 
+    weightBetween(firstNodeId: number, secondNodeId: number){
+        return this.adjacencyMatrix[firstNodeId][secondNodeId];
+    }
+
 }
