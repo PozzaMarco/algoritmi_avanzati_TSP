@@ -114,8 +114,6 @@ export default class Graph{
        let latitude2 = Math.cos(firstLatitude + secondLatitude);
 
        return Math.trunc(idealRadius * Math.acos(0.5 * ((1 + longitude) * latitude - (1 - longitude)*latitude2)) + 1);
-
-
     }
 
     createAdjacencyMatrix(){
@@ -178,7 +176,7 @@ export default class Graph{
                     this.edgeList.push(edge);
                 }
     }
-    
+
     getSortedWeights(): Array<Edge> {
         return this.edgeList.sort(//Ordino l'array di lati usando i pesi
           (a: Edge, b: Edge) => a.getWeight() - b.getWeight()
