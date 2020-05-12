@@ -9,8 +9,10 @@
 import {kruskal} from "./kruskal";
 import Edge from "./edge";
 import Graph from "./graph";
+import {performance} from "perf_hooks";
 
-function approx_t_tsp(graph: Graph): [Array<Edge>, number]{
+function approx_t_tsp(graph: Graph): [number, number]{
+    let startingTime = performance.now();
     let mst: Array<Edge> = kruskal(graph); //Calcolo l'mst
 
     //Recupero il primo e l'ultimo nodo per creare il lato che crea il ciclo Hamiltoniano
@@ -24,7 +26,7 @@ function approx_t_tsp(graph: Graph): [Array<Edge>, number]{
     //Aggiungo il lato per creare il ciclo
     mst.push(edge); 
 
-    return [mst, kruskalMstTotalWeight(mst)];
+    return [kruskalMstTotalWeight(mst), performance.now() - startingTime];
 }
 
 function kruskalMstTotalWeight(mst: Array<Edge>): number{

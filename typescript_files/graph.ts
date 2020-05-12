@@ -101,19 +101,13 @@ export default class Graph{
     }
 
     computeDistanceGEO(firstNode: GraphNode, secondNode: GraphNode): number{
-       let PI = 3.141592;
        let idealRadius = 6378.388;
 
-       let firstLatitude = PI * (Math.trunc(firstNode.getXCoord()) + 5.0 * firstNode.getXCoord() - Math.trunc(firstNode.getXCoord()) / 3.0) / 180.0;
-       let secondLatitude = PI * (Math.trunc(secondNode.getXCoord()) + 5.0 * secondNode.getXCoord() - Math.trunc(secondNode.getXCoord()) / 3.0) / 180.0;
-       let firstLongitude = PI * (Math.trunc(firstNode.getYCoord()) + 5.0 * firstNode.getYCoord() - Math.trunc(firstNode.getYCoord()) / 3.0) / 180.0;
-       let secondLongitude = PI * (Math.trunc(secondNode.getYCoord()) + 5.0 * secondNode.getYCoord() - Math.trunc(secondNode.getYCoord()) / 3.0) / 180.0;
+       let longitude = Math.cos(this.toRadian(firstNode.getYCoord()) - this.toRadian(secondNode.getYCoord()));
+       let latitude = Math.cos(this.toRadian(firstNode.getXCoord()) - this.toRadian(secondNode.getXCoord()));
+       let latitude2 = Math.cos(this.toRadian(firstNode.getXCoord()) + this.toRadian(secondNode.getXCoord()));
 
-       let longitude = Math.cos(firstLongitude - secondLongitude);
-       let latitude = Math.cos(firstLatitude - secondLatitude);
-       let latitude2 = Math.cos(firstLatitude + secondLatitude);
-
-       return Math.trunc(idealRadius * Math.acos(0.5 * ((1 + longitude) * latitude - (1 - longitude)*latitude2)) + 1);
+       return Math.trunc(idealRadius * Math.acos(0.5 * ((1.0 + longitude) * latitude - (1.0 - longitude)*latitude2)) + 1.0);
     }
 
     createAdjacencyMatrix(){
@@ -155,8 +149,8 @@ export default class Graph{
 
         coordinatesDescription.forEach(coordinate => {
             let id = parseInt(coordinate.split(" ")[0]);
-            let x_coord = parseInt(coordinate.split(" ")[1]);
-            let y_coord = parseInt(coordinate.split(" ")[2]);
+            let x_coord = parseFloat(coordinate.split(" ")[1]);
+            let y_coord = parseFloat(coordinate.split(" ")[2]);
 
             this.addNewNode(id, x_coord, y_coord);
         });
@@ -185,6 +179,14 @@ export default class Graph{
 
     weightBetween(firstNodeId: number, secondNodeId: number){
         return this.adjacencyMatrix[firstNodeId][secondNodeId];
+    }
+
+    toRadian(coordinate: number){
+        let PI = 3.141592;
+        let deg = Math.trunc(coordinate);
+        let min = coordinate - deg;
+
+        return PI * (deg + 5.0 * min / 3.0 ) / 180.0;
     }
 
 }
