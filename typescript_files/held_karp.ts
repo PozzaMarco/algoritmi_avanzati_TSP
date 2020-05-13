@@ -34,7 +34,7 @@ function held_karp_visit(currentNode: number, nodeList: Set<number>, adjMatrix: 
         nodeListCopy.delete(currentNode);
 
         for(let node of Array.from(nodeListCopy.values())){
-            if(performance.now() - startingTime < 600000){
+            if(performance.now() - startingTime < 200000){
                 let dist = held_karp_visit(node, nodeListCopy, adjMatrix, d, pi, startingTime);
 
                 if(dist + adjMatrix[currentNode][node] < minDist){
