@@ -6,9 +6,9 @@ import {nearest_neighbor} from "./typescript_files/nearest_neighbor";
 
 let graphList = createGraphsFromFile();
 let fileName = "TSP"
-writeOnFile(fileName+"_approx", "-------- NOME GRAFO ------- TEMPO ---- PESO TOTALE");
-writeOnFile(fileName+"_nearest_neighbor", "-------- NOME GRAFO ------- TEMPO ---- PESO TOTALE");
-writeOnFile(fileName+"_held_karp", "-------- NOME GRAFO ------- TEMPO ---- PESO TOTALE");
+writeOnFile(fileName+"_approx", "[NOME GRAFO] ---- [PESO TOTALE] ---- [TEMPO]");
+writeOnFile(fileName+"_nearest_neighbor", "[NOME GRAFO] ---- [PESTO TOTALE] ---- [TEMPO]");
+writeOnFile(fileName+"_held_karp", "[NOME GRAFO] ---- [PESO TOTALE] ---- [TEMPO]");
 
 //──── Approx_t_TSP con Kruskal UnionFind ────────────────────────────────────────────────
 for(let index = 0; index < graphList.length; index++){
@@ -16,7 +16,7 @@ for(let index = 0; index < graphList.length; index++){
     let elapsedTime;
     let graph = graphList[index];
     [tsp_weight, elapsedTime] = approx_t_tsp(graph);
-    writeOnFile(fileName+"_approx", graph.getName() + " " + elapsedTime +" " + tsp_weight);
+    writeOnFile(fileName+"_approx", graph.getName() + " - " + tsp_weight + " - " + elapsedTime);
 }
 //──── Nearest Neighbor ────────────────────────────────────────────────────────────────── 
 for(let index = 0; index < graphList.length; index++){
@@ -24,7 +24,7 @@ for(let index = 0; index < graphList.length; index++){
     let elapsedTime;
     let graph = graphList[index];
     [tsp_weight, elapsedTime] = nearest_neighbor(graph);
-    writeOnFile(fileName+"_nearest_neighbor", graph.getName() + " " + elapsedTime +" " + tsp_weight);
+    writeOnFile(fileName+"_nearest_neighbor", graph.getName() + " - " + tsp_weight +" - " + elapsedTime);
 }
 //──── Held-Karp ─────────────────────────────────────────────────────────────────────────
 for(let index = 0; index < graphList.length; index++){
@@ -32,7 +32,7 @@ for(let index = 0; index < graphList.length; index++){
     let elapsedTime;
     let graph = graphList[index];
     [tsp_weight, elapsedTime] = held_karp(graph);
-    writeOnFile(fileName+"_held_karp", graph.getName() + " " + elapsedTime +" " + tsp_weight);
+    writeOnFile(fileName+"_held_karp", graph.getName() + " - " + tsp_weight + " - " + elapsedTime);
 }
 
 async function writeOnFile(fileName: string, text: string){

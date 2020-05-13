@@ -140,7 +140,7 @@ export default class Graph{
         //Seconda parte in cui ho i nodi
         let coordinatesDescription = graphDescriptionFile.split("NODE_COORD_SECTION")[1].split("\n").filter(Boolean);
 
-        this.name = graphDescription[0].split(": ")[1];
+        this.name = graphDescription[0].split(": ")[1];        
         this.type = graphDescription[1].split(": ")[1];
         this.description = graphDescription[2].split(": ")[1];
         this.numberOfNode = parseInt(graphDescription[3].split(": ")[1]);
