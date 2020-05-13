@@ -3,40 +3,67 @@
  * Algoritmo di 2-approssimazione per il calcolo del TSP metrico ovvero                 *
  * il problema in cui vale la disuguaglianza triangolare tra tre nodi                   *
  * del grafo.                                                                           *
- * L'algoritmo che calcola il MSP è Kruskal con UnionFind.                              *
+ * L'algoritmo che calcola il MSP è Prim.                                               *
  *                                                                                      */
 //========================================================================================
-import {kruskal} from "./kruskal";
-import Edge from "./edge";
 import Graph from "./graph";
 import {performance} from "perf_hooks";
+import prim from "./prim";
 
 function approx_t_tsp(graph: Graph): [number, number]{
     let startingTime = performance.now();
-    let mst: Array<Edge> = kruskal(graph); //Calcolo l'mst
+    let preorderList: number[] = [];
 
-    //Recupero il primo e l'ultimo nodo per creare il lato che crea il ciclo Hamiltoniano
-    let firstNode = mst[0].firstNode;
-    let lastNode = mst[mst.length - 1].secondNode;
+    let [key, parents]= prim(graph, 1); //Calcolo l'mst
 
-    //Creo il nuovo lato
-    let edge = new Edge();
-    edge.createNewEdge(firstNode, lastNode, graph.weightBetween(firstNode,lastNode));
+    //genero la lista di nodi visitata in ordine preorder e la salvo in preorderList
+    preorderVisit(getRoot(parents),parents, preorderList);
 
-    //Aggiungo il lato per creare il ciclo
-    mst.push(edge); 
-
-    return [kruskalMstTotalWeight(mst), performance.now() - startingTime];
+    return [preorderWeight(preorderList, graph.getAdjacencyMatrix()), performance.now() - startingTime];
 }
 
-function kruskalMstTotalWeight(mst: Array<Edge>): number{
+function getRoot(parents: number[]): number{
+    for (let node = 1; node <= parents.length; node++)
+        if(parents[node] == null) // se non ha padri significa che è la radice
+            return node;
+}
+
+function preorderWeight(preorderList: number[], weights: number[][]): number{
     let totalWeight = 0;
 
-    mst.forEach(edge => {
-        totalWeight += edge.getWeight();
-    });
+    for(let index = 0; index < preorderList.length - 1; index++)
+        totalWeight += weights[preorderList[index]][preorderList[index+1]]
+
+    // aggiungo il peso che connette l'ultimo nodo con il primo in modo da creare il ciclo Hamiltoniano
+    totalWeight += weights[preorderList[preorderList.length-1]][preorderList[0]]
 
     return totalWeight;
+}
+
+function preorderVisit(currentNode: number, parentList: number[], preorderList: number[]){
+    preorderList.push(currentNode);//inserisco il nodo che sto visitando
+
+    let children = getChildren(currentNode, parentList); //recupero i figli di currentNode
+
+    if(children.length != 0){ // se ha dei figli significa che non è un nodo interno
+        children.forEach(child => {
+            preorderVisit(child, parentList,preorderList);
+        });
+    }
+}
+
+/**
+ * parent: nodo del quale voglio recuperare i figli
+ * parentList: array che contiene i padri. parentList[n] rappresenta il padre del nodo "n" nell'albero
+ */
+function getChildren(parent: number, parentList: number[]): number[]{
+    let children = [];
+
+    for(let node = 1; node <= parentList.length; node++)
+        if(parentList[node]  == parent)//ho trovato un figlio di parent
+            children.push(node);
+
+    return children;
 }
 
 export{

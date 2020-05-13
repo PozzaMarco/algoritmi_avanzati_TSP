@@ -10,28 +10,27 @@ writeOnFile(fileName+"_approx", "[NOME GRAFO] ---- [PESO TOTALE] ---- [TEMPO]");
 writeOnFile(fileName+"_nearest_neighbor", "[NOME GRAFO] ---- [PESTO TOTALE] ---- [TEMPO]");
 writeOnFile(fileName+"_held_karp", "[NOME GRAFO] ---- [PESO TOTALE] ---- [TEMPO]");
 
-//──── Approx_t_TSP con Kruskal UnionFind ────────────────────────────────────────────────
-/* for(let index = 0; index < graphList.length; index++){
+//──── Approx_t_TSP con Prim ────────────────────────────────────────────────
+for(let index = 0; index < graphList.length; index++){
     let tsp_weight;
     let elapsedTime;
     let graph = graphList[index];
     [tsp_weight, elapsedTime] = approx_t_tsp(graph);
     writeOnFile(fileName+"_approx", graph.getName() + " - " + tsp_weight + " - " + elapsedTime);
-} */
+}
 //──── Nearest Neighbor ────────────────────────────────────────────────────────────────── 
-/* for(let index = 0; index < graphList.length; index++){
+for(let index = 0; index < graphList.length; index++){
     let tsp_weight;
     let elapsedTime;
     let graph = graphList[index];
     [tsp_weight, elapsedTime] = nearest_neighbor(graph);
     writeOnFile(fileName+"_nearest_neighbor", graph.getName() + " - " + tsp_weight +" - " + elapsedTime);
-} */
+}
 //──── Held-Karp ─────────────────────────────────────────────────────────────────────────
 for(let index = 0; index < graphList.length; index++){
     let tsp_weight;
     let elapsedTime;
     let graph = graphList[index];
-    console.log("Processing "+ graph.getName());
     [tsp_weight, elapsedTime] = held_karp(graph);
     writeOnFile(fileName+"_held_karp", graph.getName() + " - " + tsp_weight + " - " + elapsedTime);
 }

@@ -25,7 +25,7 @@ export default class Graph{
     
     adjacencyMatrix: number[][]; //Matrice di adiacenza che descrive le distanze tra nodi
     nodeList: Array<GraphNode>; //Lista di nodi del grafo
-    edgeList: Array<Edge>; //Lista di lati del grafo usata in Kruskal
+    edgeList: Array<Edge>;
 
     constructor(){
         this.name = this.description = this.type = this.edgeWeightType = this.displayDataType = "";
